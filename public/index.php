@@ -1,22 +1,31 @@
 <?php
 
-require_once '../config/database.php';
+require_once '../app/models/Cidade.php';
+require_once '../app/models/CidadeRepository.php';
 
-$db = Database::getInstance();
-$conn = $db->getConnection();
+try {
+    $repository = new CidadeRepository();
 
-echo "Conexão realizada com sucesso <br>";
+    $cidade = new Cidade("Mogi Mirim", "SP");
 
-$stmt = $conn->prepare(
-    "INSERT INTO cidades (nome, estado) VALUES (?, ?)"
-);
-$stmt->execute(["Itapira", "SP"]);
+    //salvando no bd
+    $repository->salvar($cidade);
 
-$stmt = $conn->query("SELECT * FROM cidades");
-$cidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    echo "<h3>Cidade salva com sucesso!</h3>";
 
-echo "<pre>";
-print_r($cidades);
-echo "</pre>";
+    //listando cidades
+    $cidades = $repository->lista();
+
+    foreach ($cidades as $cidade) {
+
+    echo"ID:" . $cidade->getID() . "<br>";
+    echo"Nome:" . $cidade->getNome() . "<br>";
+    echo"Estado:" . $cidade->getEstado() . "<br>";
+    echo "<hr>";
+    }
+} catch (Exception $e) {
+    echo "Erro: " . $e->getMessage();
+}
+
 
 ?>
