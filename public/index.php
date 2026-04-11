@@ -1,19 +1,22 @@
 <?php
 
-require_once '../app/models/Cidade.php';
-try{
+require_once '../config/database.php';
 
-    // criando objeto
-    $cidade = new Cidade("Itapira", "sp");
-    $cidade->setId(1);
+$db = Database::getInstance();
+$conn = $db->getConnection();
 
-    echo "<h2> Dados da cidade </h2>";
-    echo "ID: " . $cidade->getId() . "<br>";
-    echo "Nome: " . $cidade->getNome() . "<br>";
-    echo "Estado: " . $cidade->getEstado() . "<br>";
-} catch (Exception $e) {
-    echo "Erro: " . $e->getMessage();
-}
+echo "Conexão realizada com sucesso <br>";
 
+$stmt = $conn->prepare(
+    "INSERT INTO cidades (nome, estado) VALUES (?, ?)"
+);
+$stmt->execute(["Itapira", "SP"]);
+
+$stmt = $conn->query("SELECT * FROM cidades");
+$cidades = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+echo "<pre>";
+print_r($cidades);
+echo "</pre>";
 
 ?>
